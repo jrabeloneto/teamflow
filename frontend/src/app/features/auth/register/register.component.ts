@@ -22,7 +22,6 @@ import { AuthService } from '../../../core/services/auth.service';
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-brand">
-          <div class="brand-icon">TF</div>
           <h1>TeamFlow</h1>
         </div>
         <h2>Criar conta</h2>
@@ -63,8 +62,7 @@ import { AuthService } from '../../../core/services/auth.service';
   styles: [`
     .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f8fafc; padding: 24px; }
     .auth-card { width: 100%; max-width: 420px; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-    .auth-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
-    .brand-icon { width: 44px; height: 44px; background: #3b82f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: white; }
+    .auth-brand { display: flex; align-items: center; margin-bottom: 32px; }
     .auth-brand h1 { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0; }
     .auth-card h2 { font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
     .subtitle { color: #64748b; margin-bottom: 28px; }

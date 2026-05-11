@@ -22,7 +22,6 @@ import { AuthService } from '../../../core/services/auth.service';
     <div class="auth-container">
       <div class="auth-left">
         <div class="auth-brand">
-          <div class="brand-icon">TF</div>
           <h1>TeamFlow</h1>
         </div>
         <h2>Gerencie suas equipes com eficiência</h2>
@@ -85,11 +84,7 @@ import { AuthService } from '../../../core/services/auth.service';
       flex: 1; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
       color: white; padding: 60px; display: flex; flex-direction: column; justify-content: center;
     }
-    .auth-brand { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; }
-    .brand-icon {
-      width: 52px; height: 52px; background: #3b82f6; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px;
-    }
+    .auth-brand { display: flex; align-items: center; margin-bottom: 48px; }
     .auth-brand h1 { font-size: 28px; font-weight: 800; margin: 0; }
     .auth-left h2 { font-size: 32px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
     .auth-left p { color: rgba(255,255,255,0.7); font-size: 16px; margin-bottom: 40px; }

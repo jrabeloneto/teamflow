@@ -17,7 +17,6 @@ interface NavItem {
   template: `
     <aside class="sidebar" [class.collapsed]="collapsed">
       <div class="sidebar-brand">
-        <div class="brand-icon">TF</div>
         <span class="brand-name" *ngIf="!collapsed">TeamFlow</span>
       </div>
       <nav class="sidebar-nav">
@@ -46,11 +45,6 @@ interface NavItem {
     .sidebar-brand {
       display: flex; align-items: center; gap: 12px; padding: 20px 16px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .brand-icon {
-      width: 40px; height: 40px; background: #3b82f6; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 14px; flex-shrink: 0;
     }
     .brand-name { font-size: 18px; font-weight: 700; white-space: nowrap; }
     .sidebar-nav { flex: 1; padding: 16px 8px; display: flex; flex-direction: column; gap: 4px; }
