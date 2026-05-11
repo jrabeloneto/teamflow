@@ -1,40 +1,63 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { Member, MemberRequest } from '../models/member.model';
 import { PageResponse } from '../models/team.model';
-import { environment } from '../../../environments/environment';
+import { mockStore } from './mock-data.store';
 
 @Injectable({ providedIn: 'root' })
 export class MemberService {
-  private readonly url = `${environment.apiUrl}/members`;
-
-  constructor(private http: HttpClient) {}
-
   getAll(page = 0, size = 10, search?: string, status?: string): Observable<PageResponse<Member>> {
-    let params = new HttpParams().set('page', page).set('size', size).set('sort', 'name');
-    if (search) params = params.set('search', search);
-    if (status) params = params.set('status', status);
-    return this.http.get<PageResponse<Member>>(this.url, { params });
+    let all = mockStore.getMembers();
+    if (search) {
+      const q = search.toLowerCase();
+      all = all.filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        m.email.toLowerCase().includes(q) ||
+        (m.position ?? '').toLowerCase().includes(q)
+      );
+    }
+    if (status) all = all.filter(m => m.status === status);
+    all = [...all].sort((a, b) => a.name.localeCompare(b.name));
+    const totalElements = all.length;
+    const totalPages = Math.max(1, Math.ceil(totalElements / size));
+    const content = all.slice(page * size, page * size + size);
+    return of({ content, totalElements, totalPages, size, number: page }).pipe(delay(150));
   }
 
   getById(id: number): Observable<Member> {
-    return this.http.get<Member>(`${this.url}/${id}`);
+    return of(mockStore.findMember(id)!).pipe(delay(150));
   }
 
   getByTeam(teamId: number): Observable<Member[]> {
-    return this.http.get<Member[]>(`${this.url}/team/${teamId}`);
+    return of(mockStore.getMembers().filter(m => m.teamId === teamId)).pipe(delay(150));
   }
 
   create(request: MemberRequest): Observable<Member> {
-    return this.http.post<Member>(this.url, request);
+    const team = request.teamId ? mockStore.findTeam(request.teamId) : undefined;
+    const created = mockStore.addMember({
+      name: request.name,
+      email: request.email,
+      phone: request.phone,
+      position: request.position,
+      department: request.department,
+      avatarUrl: request.avatarUrl,
+      status: request.status ?? 'ACTIVE',
+      joinDate: request.joinDate,
+      teamId: request.teamId,
+      teamName: team?.name,
+    } as Omit<Member, 'id' | 'createdAt' | 'updatedAt'>);
+    return of(created).pipe(delay(200));
   }
 
   update(id: number, request: MemberRequest): Observable<Member> {
-    return this.http.put<Member>(`${this.url}/${id}`, request);
+    const team = request.teamId ? mockStore.findTeam(request.teamId) : undefined;
+    const updated = mockStore.updateMember(id, { ...request, teamName: team?.name });
+    return of(updated!).pipe(delay(200));
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${id}`);
+    mockStore.deleteMember(id);
+    return of(void 0).pipe(delay(150));
   }
 }

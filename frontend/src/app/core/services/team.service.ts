@@ -1,35 +1,48 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { Team, TeamRequest, PageResponse } from '../models/team.model';
-import { environment } from '../../../environments/environment';
+import { mockStore } from './mock-data.store';
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {
-  private readonly url = `${environment.apiUrl}/teams`;
-
-  constructor(private http: HttpClient) {}
-
   getAll(page = 0, size = 10, search?: string, status?: string): Observable<PageResponse<Team>> {
-    let params = new HttpParams().set('page', page).set('size', size).set('sort', 'name');
-    if (search) params = params.set('search', search);
-    if (status) params = params.set('status', status);
-    return this.http.get<PageResponse<Team>>(this.url, { params });
+    let all = mockStore.getTeams();
+    if (search) {
+      const q = search.toLowerCase();
+      all = all.filter(t => t.name.toLowerCase().includes(q) || (t.description ?? '').toLowerCase().includes(q));
+    }
+    if (status) all = all.filter(t => t.status === status);
+    all = [...all].sort((a, b) => a.name.localeCompare(b.name));
+    const totalElements = all.length;
+    const totalPages = Math.max(1, Math.ceil(totalElements / size));
+    const content = all.slice(page * size, page * size + size);
+    return of({ content, totalElements, totalPages, size, number: page }).pipe(delay(150));
   }
 
   getById(id: number): Observable<Team> {
-    return this.http.get<Team>(`${this.url}/${id}`);
+    const team = mockStore.findTeam(id);
+    return of(team!).pipe(delay(150));
   }
 
   create(request: TeamRequest): Observable<Team> {
-    return this.http.post<Team>(this.url, request);
+    const created = mockStore.addTeam({
+      name: request.name,
+      description: request.description,
+      department: request.department,
+      status: request.status ?? 'ACTIVE',
+      managerId: request.managerId,
+    } as Omit<Team, 'id' | 'memberCount' | 'createdAt' | 'updatedAt'>);
+    return of(created).pipe(delay(200));
   }
 
   update(id: number, request: TeamRequest): Observable<Team> {
-    return this.http.put<Team>(`${this.url}/${id}`, request);
+    const updated = mockStore.updateTeam(id, request);
+    return of(updated!).pipe(delay(200));
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.url}/${id}`);
+    mockStore.deleteTeam(id);
+    return of(void 0).pipe(delay(150));
   }
 }
